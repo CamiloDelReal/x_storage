@@ -178,17 +178,17 @@ void StorageFactory::readStoragesData()
     QAndroidJniObject appContext = QtAndroid::androidContext();
     if(apiVersion >= 23) // API 23 = Android 6
     {
+        QAndroidJniObject packageNameObj = appContext.callObjectMethod("getPackageName", "()Ljava/lang/String;");
         jint kernelUID = appContext
                 .callObjectMethod("getPackageManager", "()Landroid/content/pm/PackageManager;")
                 .callObjectMethod("getPackageInfo", "(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;",
-                                  QAndroidJniObject::fromString("org.xapp.testing.mountservice").object<jstring>(), 0)
+                                  packageNameObj.object<jstring>(), 0)
                 .getObjectField("applicationInfo", "Landroid/content/pm/ApplicationInfo;")
                 .getField<jint>("uid");
-
         mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList",
                                                              "(ILjava/lang/String;I)[Landroid/os/storage/StorageVolume;",
                                                              kernelUID,
-                                                             QAndroidJniObject::fromString("org.xapp.storagestest").object<jstring>(),
+                                                             packageNameObj.object<jstring>(),
                                                              0);
     }
     else

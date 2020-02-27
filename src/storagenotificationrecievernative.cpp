@@ -33,7 +33,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* /*reserved*/)
     if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
       return JNI_ERR;
 
-    jclass javaClass = env->FindClass("org/xapps/modules/storage/StorageNotificationNative");
+    jclass javaClass = env->FindClass("org/xapps/libraries/xstorage/StorageNotificationNative");
     if (!javaClass)
     {
         return JNI_ERR;
