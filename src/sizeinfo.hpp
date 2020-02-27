@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+
 class SizeInfo : public QObject
 {
     Q_OBJECT

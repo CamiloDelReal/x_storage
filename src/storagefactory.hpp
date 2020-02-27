@@ -6,6 +6,7 @@
 #include "storagefactoryworker.hpp"
 #include "storagedevice.hpp"
 
+
 class StorageFactory : public StorageFactoryWorker
 {
     Q_OBJECT

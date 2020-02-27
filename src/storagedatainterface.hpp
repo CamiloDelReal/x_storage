@@ -5,6 +5,7 @@
 
 #include "storagedevice.hpp"
 
+
 class StorageDataInterface : public QObject
 {
     Q_OBJECT

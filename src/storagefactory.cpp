@@ -19,6 +19,7 @@
 //QUITAR
 #include <QDebug>
 
+
 StorageFactory::StorageFactory(QObject *parent)
     : StorageFactoryWorker(parent)
 {

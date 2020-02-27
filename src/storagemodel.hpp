@@ -7,6 +7,7 @@
 
 #include "storagefactory.hpp"
 
+
 class StorageModel : public QAbstractListModel
 {
     Q_OBJECT

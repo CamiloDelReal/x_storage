@@ -8,6 +8,7 @@
 #include "storagemodel.hpp"
 #include "storagedatainterface.hpp"
 
+
 class StorageManager : public QObject
 {
     Q_OBJECT

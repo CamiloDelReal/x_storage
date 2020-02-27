@@ -10,6 +10,7 @@
 
 #include "sizeinfo.hpp"
 
+
 SizeInfo::SizeInfo(QObject *parent)
     : QObject(parent)
 {

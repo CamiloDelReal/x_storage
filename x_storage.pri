@@ -7,7 +7,8 @@ HEADERS += \
     $$PWD/src/storagefactoryworker.hpp \
     $$PWD/src/storagedatainterface.hpp \
     $$PWD/src/storagemanager.hpp \
-    $$PWD/src/storagemodel.hpp
+    $$PWD/src/storagemodel.hpp \
+    $$PWD/src/storageutils.hpp
 
 SOURCES += \
     $$PWD/src/mountpoint.cpp \
@@ -17,7 +18,8 @@ SOURCES += \
     $$PWD/src/storagefactoryworker.cpp \
     $$PWD/src/storagedatainterface.cpp \
     $$PWD/src/storagemanager.cpp \
-    $$PWD/src/storagemodel.cpp
+    $$PWD/src/storagemodel.cpp \
+    $$PWD/src/storageutils.cpp
 
 INCLUDEPATH += \
     $$PWD/src
@@ -43,4 +45,4 @@ android {
 
 #************  Other  *****************************************************************************
 OTHER_FILES += \
-    $$PWD/README
+    $$PWD/readme

@@ -3,6 +3,7 @@
 //QUITAR
 #include <QDebug>
 
+
 StorageModel::StorageModel(QObject *parent)
     : QAbstractListModel(parent)
 {

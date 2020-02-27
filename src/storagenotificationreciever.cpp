@@ -3,6 +3,7 @@
 //QUITAR
 #include <QDebug>
 
+
 StorageNotificationReciever *StorageNotificationReciever::getInstance()
 {
     static StorageNotificationReciever *uniqueInstance = nullptr;

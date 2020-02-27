@@ -6,6 +6,7 @@
 #include "mountpoint.hpp"
 #include "sizeinfo.hpp"
 
+
 class StorageDevice : public MountPoint
 {
     Q_OBJECT

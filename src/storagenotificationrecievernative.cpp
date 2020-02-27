@@ -8,6 +8,7 @@
 
 #if (defined (Q_OS_ANDROID) && !defined(NO_STORAGE_NOTIFICATION_LISTENER))
 
+
 static void deviceMounted(JNIEnv * /*env*/, jobject /*obj*/)
 {
     QMetaObject::invokeMethod(StorageNotificationReciever::getInstance(),

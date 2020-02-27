@@ -1,5 +1,6 @@
 #include "storagemanager.hpp"
 
+
 #if (defined (Q_OS_ANDROID) && !defined(NO_STORAGE_NOTIFICATION_LISTENER))
 #include "storagenotificationreciever.hpp"
 #endif

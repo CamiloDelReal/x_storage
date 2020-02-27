@@ -3,9 +3,10 @@
 
 #include <QObject>
 
-#include "workertemplate.hpp"
+#include "xworkertemplate.hpp"
 #include "storagedatainterface.hpp"
 
-WORKER_DECLARATION_TEMPLATE(StorageFactoryWorker, StorageDataInterface, Q_OBJECT)
+
+X_WORKER_DECLARATION_TEMPLATE(StorageFactoryWorker, StorageDataInterface, Q_OBJECT)
 
 #endif //STORAGEFACTORYWORKER_HPP

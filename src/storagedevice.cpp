@@ -1,5 +1,6 @@
 #include "storagedevice.hpp"
-#include "utilities.hpp"
+#include "storageutils.hpp"
+
 
 StorageDevice::StorageDevice(QObject *parent)
     : MountPoint(parent)
@@ -167,7 +168,7 @@ void StorageDevice::setTotalSize(const quint64 &totalSize)
     if(m_sizes.total() != totalSize)
     {
         m_sizes.setTotal(totalSize);
-        setTotalSizeStr(Utilities::size2str(m_sizes.total()));
+        setTotalSizeStr(StorageUtils::size2str(m_sizes.total()));
 
         if(m_sizes.total() > 0)
         {
@@ -188,7 +189,7 @@ void StorageDevice::setFreeSize(const quint64 &freeSize)
     if(m_sizes.free() != freeSize)
     {
         m_sizes.setFree(freeSize);
-        setFreeSizeStr(Utilities::size2str(m_sizes.free()));
+        setFreeSizeStr(StorageUtils::size2str(m_sizes.free()));
 
         if(m_sizes.total() > 0)
         {
@@ -233,8 +234,8 @@ void StorageDevice::setUsedPercent(const quint32 &usedPercent)
 
 void StorageDevice::updateSizesStr()
 {
-    setTotalSizeStr(Utilities::size2str(m_sizes.total()));
-    setFreeSizeStr(Utilities::size2str(m_sizes.free()));
+    setTotalSizeStr(StorageUtils::size2str(m_sizes.total()));
+    setFreeSizeStr(StorageUtils::size2str(m_sizes.free()));
 
     if(m_sizes.total() > 0)
     {

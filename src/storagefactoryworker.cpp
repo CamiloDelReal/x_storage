@@ -1,3 +1,4 @@
 #include "storagefactoryworker.hpp"
 
-WORKER_DEFINITION_TEMPLATE(StorageFactoryWorker, StorageDataInterface)
+
+X_WORKER_DEFINITION_TEMPLATE(StorageFactoryWorker, StorageDataInterface)
