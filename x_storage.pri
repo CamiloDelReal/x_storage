@@ -37,9 +37,9 @@ android {
         $$PWD/src/storagenotificationrecievernative.cpp
 
     DISTFILES += \
-        $$PWD/android/src/org/xapps/modules/storage/StorageNotificationNative.java \
-        $$PWD/android/src/org/xapps/modules/storage/StorageNotificationReciever.java \
-        $$PWD/android/src/org/xapps/modules/storage/StorageNotificationRunner.java
+        $$PWD/android/src/org/xapps/libraries/xstorage/StorageNotificationNative.java \
+        $$PWD/android/src/org/xapps/libraries/xstorage/StorageNotificationReciever.java \
+        $$PWD/android/src/org/xapps/libraries/xstorage/StorageNotificationRunner.java
 }
 
 

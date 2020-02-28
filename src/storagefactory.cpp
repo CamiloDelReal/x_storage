@@ -16,9 +16,6 @@
 #include "storagenotificationreciever.hpp"
 #endif
 
-//QUITAR
-#include <QDebug>
-
 
 StorageFactory::StorageFactory(QObject *parent)
     : StorageFactoryWorker(parent)
@@ -163,40 +160,58 @@ void StorageFactory::readStoragesData()
     QAndroidJniObject primaryStorageStringObj = primaryStorageFileObj.callObjectMethod( "getAbsolutePath", "()Ljava/lang/String;" );
     QString primaryStoragePath = primaryStorageStringObj.toString();
 
+    QAndroidJniObject appContext = QtAndroid::androidContext();
+    int apiVersion = QtAndroid::androidSdkVersion();
+
     //Get storage info from Android Services
-    QAndroidJniObject serviceObj = QAndroidJniObject::callStaticObjectMethod("android/os/ServiceManager",
-                                                                             "getService",
-                                                                             "(Ljava/lang/String;)Landroid/os/IBinder;",
-                                                                             QAndroidJniObject::fromString("mount").object<jstring>());
-    QAndroidJniObject mountServiceObj = QAndroidJniObject::callStaticObjectMethod("android/os/storage/IMountService$Stub",
-                                                                                  "asInterface",
-                                                                                  "(Landroid/os/IBinder;)Landroid/os/storage/IMountService;",
-                                                                                  serviceObj.object<jobject>());
+    QAndroidJniObject mountServiceObj;
+
+    if(apiVersion < 26) // API 26 = Android 8.0
+    {
+        QAndroidJniObject serviceObj = QAndroidJniObject::callStaticObjectMethod("android/os/ServiceManager",
+                                                                                 "getService",
+                                                                                 "(Ljava/lang/String;)Landroid/os/IBinder;",
+                                                                                 QAndroidJniObject::fromString("mount").object<jstring>());
+        mountServiceObj = QAndroidJniObject::callStaticObjectMethod("android/os/storage/IMountService$Stub",
+                                                                                      "asInterface",
+                                                                                      "(Landroid/os/IBinder;)Landroid/os/storage/IMountService;",
+                                                                                      serviceObj.object<jobject>());
+    }
+    else
+    {
+        QAndroidJniObject storageServiceName = QAndroidJniObject::getStaticObjectField("android/content/Context", "STORAGE_SERVICE", "Ljava/lang/String;");
+        mountServiceObj = appContext.callObjectMethod("getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;", storageServiceName.object());
+
+    }
+
     QAndroidJniObject mountedDevicesObj;
 
-    int apiVersion = QtAndroid::androidSdkVersion();
-    QAndroidJniObject appContext = QtAndroid::androidContext();
-    if(apiVersion >= 23) // API 23 = Android 6
+    if(apiVersion < 18)         // API 18 = Android 4.3
     {
+        mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList", "()[Landroid/os/Parcelable;");
+    }
+    else if(apiVersion < 23)    // API 23 = Android 6.0
+    {
+        mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList", "()[Landroid/os/storage/StorageVolume;");
+    }
+    else if(apiVersion < 26)    // API 26 = Android 8.0
+    {
+        QAndroidJniObject packageNameObj = appContext.callObjectMethod("getPackageName", "()Ljava/lang/String;");
         jint kernelUID = appContext
                 .callObjectMethod("getPackageManager", "()Landroid/content/pm/PackageManager;")
                 .callObjectMethod("getPackageInfo", "(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;",
-                                  QAndroidJniObject::fromString("org.xapp.testing.mountservice").object<jstring>(), 0)
+                                  packageNameObj.object<jstring>(), 0)
                 .getObjectField("applicationInfo", "Landroid/content/pm/ApplicationInfo;")
                 .getField<jint>("uid");
-
         mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList",
                                                              "(ILjava/lang/String;I)[Landroid/os/storage/StorageVolume;",
                                                              kernelUID,
-                                                             QAndroidJniObject::fromString("org.xapp.storagestest").object<jstring>(),
+                                                             packageNameObj.object<jstring>(),
                                                              0);
     }
     else
     {
-        if(apiVersion < 18) // API 18 = Android 4.3
-            mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList", "()[Landroid/os/Parcelable;");
-        else
-            mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList", "()[Landroid/os/storage/StorageVolume;");
+        mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList", "()[Landroid/os/storage/StorageVolume;");
     }
 
     jobjectArray devList = mountedDevicesObj.object<jobjectArray>();
