@@ -21,6 +21,7 @@ class StorageDevice : public MountPoint
     Q_PROPERTY(QString totalSizeStr READ totalSizeStr WRITE setTotalSizeStr NOTIFY totalSizeStrChanged)
     Q_PROPERTY(QString freeSizeStr READ freeSizeStr WRITE setFreeSizeStr NOTIFY freeSizeStrChanged)
     Q_PROPERTY(quint32 usedPercent READ usedPercent WRITE setUsedPercent NOTIFY usedPercentChanged)
+    Q_PROPERTY(QString usedPercentStr READ usedPercentStr WRITE setUsedPercentStr NOTIFY usedPercentStrChanged)
 
 public:
     enum StorageType
@@ -56,7 +57,8 @@ public:
 
     QString totalSizeStr() const;
     QString freeSizeStr() const;
-    quint32 usedPercent() const;
+    quint32 usedPercent() const;    
+    QString usedPercentStr() const;
 
 public slots:
     void setName(const QString &name);
@@ -65,6 +67,7 @@ public slots:
     void setIsRemovable(const bool &isRemovable);
     void setTotalSize(const quint64 &totalSize);
     void setFreeSize(const quint64 &freeSize);
+    void setUsedPercentStr(const QString &usedPercentStr);
 
 private slots:
     void setTotalSizeStr(const QString &totalSizeStr);
@@ -82,6 +85,7 @@ signals:
     void totalSizeStrChanged(const QString &totalSizeStr);
     void freeSizeStrChanged(const QString &freeSizeStr);
     void usedPercentChanged(const quint32 &usedPercent);
+    void usedPercentStrChanged(const QString &usedPercentStr);
 
 private:
     QString m_name;
@@ -93,6 +97,7 @@ private:
     QString m_totalSizeStr;
     QString m_freeSizeStr;
     quint32 m_usedPercent;
+    QString m_usedPercentStr;
 
     void updateSizesStr();
 };

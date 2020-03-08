@@ -27,7 +27,8 @@ public:
         FreeSizeRole,
         TotalSizeStrRole,
         FreeSizeStrRole,
-        UsedPercentRole
+        UsedPercentRole,
+        UsedPercentStrRole
     };
 
     explicit StorageModel(QObject *parent = nullptr);

@@ -146,19 +146,13 @@ void StorageFactory::readStoragesData()
 
     //Get Root Storage Memory
     QString rootPath = "/";
-    QString systemRootPath = "/data";
     if(mountedPoints.contains(rootPath))
     {
         MountPoint rootPoint = mountedPoints.value(rootPath);
-        SizeInfo rootSizes = SizeInfo::calculate(systemRootPath);
+        SizeInfo rootSizes = SizeInfo::calculate(rootPath);
 
         m_storages << StorageDevice(rootPoint, "Root", StorageDevice::Root, false, false, rootSizes);
     }
-
-    //Get Primary Storage Path
-    QAndroidJniObject primaryStorageFileObj = QAndroidJniObject::callStaticObjectMethod("android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;");
-    QAndroidJniObject primaryStorageStringObj = primaryStorageFileObj.callObjectMethod( "getAbsolutePath", "()Ljava/lang/String;" );
-    QString primaryStoragePath = primaryStorageStringObj.toString();
 
     QAndroidJniObject appContext = QtAndroid::androidContext();
     int apiVersion = QtAndroid::androidSdkVersion();
@@ -166,16 +160,16 @@ void StorageFactory::readStoragesData()
     //Get storage info from Android Services
     QAndroidJniObject mountServiceObj;
 
-    if(apiVersion < 26) // API 26 = Android 8.0
+    if(apiVersion < 24) // API 24 = Android 7.0
     {
         QAndroidJniObject serviceObj = QAndroidJniObject::callStaticObjectMethod("android/os/ServiceManager",
                                                                                  "getService",
                                                                                  "(Ljava/lang/String;)Landroid/os/IBinder;",
                                                                                  QAndroidJniObject::fromString("mount").object<jstring>());
         mountServiceObj = QAndroidJniObject::callStaticObjectMethod("android/os/storage/IMountService$Stub",
-                                                                                      "asInterface",
-                                                                                      "(Landroid/os/IBinder;)Landroid/os/storage/IMountService;",
-                                                                                      serviceObj.object<jobject>());
+                                                                    "asInterface",
+                                                                    "(Landroid/os/IBinder;)Landroid/os/storage/IMountService;",
+                                                                    serviceObj.object<jobject>());
     }
     else
     {
@@ -194,7 +188,7 @@ void StorageFactory::readStoragesData()
     {
         mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList", "()[Landroid/os/storage/StorageVolume;");
     }
-    else if(apiVersion < 26)    // API 26 = Android 8.0
+    else if(apiVersion < 24)    // API 24 = Android 7.0
     {
         QAndroidJniObject packageNameObj = appContext.callObjectMethod("getPackageName", "()Ljava/lang/String;");
         jint kernelUID = appContext
@@ -211,7 +205,8 @@ void StorageFactory::readStoragesData()
     }
     else
     {
-        mountedDevicesObj = mountServiceObj.callObjectMethod("getVolumeList", "()[Landroid/os/storage/StorageVolume;");
+        QAndroidJniObject storageVolumesListObj = mountServiceObj.callObjectMethod("getStorageVolumes", "()Ljava/util/List;");
+        mountedDevicesObj = storageVolumesListObj.callObjectMethod("toArray", "()[Ljava/lang/Object;");
     }
 
     jobjectArray devList = mountedDevicesObj.object<jobjectArray>();
@@ -225,31 +220,78 @@ void StorageFactory::readStoragesData()
         {
             QAndroidJniObject pathObj = devItem.callObjectMethod("getPath", "()Ljava/lang/String;");
             QString path = pathObj.toString();
+            MountPoint devMountPoint;
+
             if(mountedPoints.contains(path))
             {
-                MountPoint devMountPoint = mountedPoints.value(path);
-                QAndroidJniObject nameObj = devItem.callObjectMethod("getDescription", "(Landroid/content/Context;)Ljava/lang/String;", appContext.object<jobject>());
-                QString name = (nameObj != nullptr && nameObj.isValid() ? nameObj.toString() : "");
-                jboolean isPrimary = (primaryStoragePath == path);
-                jboolean isRemovable = devItem.callMethod<jboolean>("isRemovable", "()Z");
-                SizeInfo devSizes = SizeInfo::calculate(path);
-
-                StorageDevice::StorageType type = StorageDevice::Unknown;
-                if(!isRemovable)
+                devMountPoint = mountedPoints.value(path);
+            }
+            else
+            {
+                // Check if it is emulated
+                QRegExp emulatedPattern(".*emulated\\/\\d+$");
+                if(emulatedPattern.exactMatch(path))
                 {
-                    type = StorageDevice::Internal;
+                    QRegExp emulatedPreffixRemover("\\/\\d+$");
+                    QString mountedPath = path;
+                    path.remove(emulatedPreffixRemover);
+                    if(mountedPoints.contains(path))
+                    {
+                        devMountPoint = mountedPoints.value(path);
+                        devMountPoint.setPath(mountedPath);
+                    }
+                    else
+                    {
+                        devMountPoint = MountPoint(path);
+                    }
                 }
                 else
                 {
-                    QRegExp usbPattern(".*usb.*");
-                    if(usbPattern.exactMatch(path))
-                        type = StorageDevice::Usb;
-                    else
-                        type = StorageDevice::SdCard;
+                    devMountPoint = MountPoint(path);
                 }
 
-                m_storages << StorageDevice(devMountPoint, name, type, isPrimary, isRemovable, devSizes);
             }
+
+            QAndroidJniObject nameObj = devItem.callObjectMethod("getDescription", "(Landroid/content/Context;)Ljava/lang/String;", appContext.object<jobject>());
+            QString name = (nameObj != nullptr && nameObj.isValid() ? nameObj.toString() : "");
+            jboolean isRemovable = devItem.callMethod<jboolean>("isRemovable", "()Z");
+            SizeInfo devSizes = SizeInfo::calculate(path);
+
+            jboolean isPrimary;
+
+            if(apiVersion < 24)
+            {
+                //Get Primary Storage Path
+                QAndroidJniObject primaryStorageFileObj = QAndroidJniObject::callStaticObjectMethod("android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;");
+                QAndroidJniObject primaryStorageStringObj = primaryStorageFileObj.callObjectMethod( "getAbsolutePath", "()Ljava/lang/String;" );
+                QString primaryStoragePath = primaryStorageStringObj.toString();
+                isPrimary = (primaryStoragePath == path);
+            }
+            else
+            {
+                isPrimary = devItem.callMethod<jboolean>("isPrimary", "()Z");
+            }
+
+            StorageDevice::StorageType type = StorageDevice::Unknown;
+
+            if(!isRemovable)
+            {
+                type = StorageDevice::Internal;
+            }
+            else
+            {
+                QRegExp usbPattern(".*usb.*|.*media_rw.*");
+                if(usbPattern.exactMatch(path))
+                {
+                    type = StorageDevice::Usb;
+                }
+                else
+                {
+                    type = StorageDevice::SdCard;
+                }
+            }
+
+            m_storages << StorageDevice(devMountPoint, name, type, isPrimary, isRemovable, devSizes);
         }
     }
 

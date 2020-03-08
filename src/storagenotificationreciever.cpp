@@ -1,8 +1,5 @@
 #include "storagenotificationreciever.hpp"
 
-//QUITAR
-#include <QDebug>
-
 
 StorageNotificationReciever *StorageNotificationReciever::getInstance()
 {

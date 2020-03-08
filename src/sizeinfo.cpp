@@ -6,6 +6,7 @@
 #elif defined(Q_OS_ANDROID) || defined(Q_OS_LINUX)
 #include <sys/vfs.h>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #endif
 
 #include "sizeinfo.hpp"
