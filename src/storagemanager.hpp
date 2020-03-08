@@ -34,6 +34,8 @@ signals:
 private:
     StorageFactory m_storageFactory;
     StorageModel m_storageModel;
+
+    void scheduleUpdate();
 };
 
 #endif // STORAGEMANAGER_HPP

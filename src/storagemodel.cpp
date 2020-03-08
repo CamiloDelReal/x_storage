@@ -87,6 +87,9 @@ QVariant StorageModel::data(const QModelIndex &index, int role) const
         case UsedPercentRole:
             wrapper.setValue(storage.usedPercent());
             break;
+        case UsedPercentStrRole:
+            wrapper.setValue(storage.usedPercentStr());
+            break;
         }
     }
 
@@ -147,5 +150,6 @@ QHash<int, QByteArray> StorageModel::roleNames() const
     roles[TotalSizeStrRole] = QByteArrayLiteral("totalSizeStr");
     roles[FreeSizeStrRole] = QByteArrayLiteral("freeSizeStr");
     roles[UsedPercentRole] = QByteArrayLiteral("usedPercent");
+    roles[UsedPercentStrRole] = QByteArrayLiteral("usedPercentStr");
     return roles;
 }

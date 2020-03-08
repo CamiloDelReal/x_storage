@@ -7,6 +7,12 @@ MountPoint::MountPoint(QObject *parent)
 
 }
 
+MountPoint::MountPoint(const QString &path, QObject *parent)
+    : QObject(parent)
+{
+    m_path = path;
+}
+
 MountPoint::MountPoint(const QString &path, const QString &device,
                        const bool &allowReadWrite, const QString &fileSystem,
                        QObject *parent)

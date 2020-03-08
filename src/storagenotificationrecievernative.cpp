@@ -3,9 +3,6 @@
 
 #include "storagenotificationreciever.hpp"
 
-//QUITAR
-#include <QDebug>
-
 #if (defined (Q_OS_ANDROID) && !defined(NO_STORAGE_NOTIFICATION_LISTENER))
 
 

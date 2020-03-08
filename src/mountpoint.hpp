@@ -13,6 +13,7 @@ class MountPoint : public QObject
     Q_PROPERTY(QString fileSystem READ fileSystem WRITE setFileSystem NOTIFY fileSystemChanged)
 public:
     explicit MountPoint(QObject *parent = nullptr);
+    MountPoint(const QString &path, QObject *parent = nullptr);
     MountPoint(const QString &path, const QString &device,
                const bool &allowReadWrite, const QString &fileSystem,
                QObject *parent = nullptr);

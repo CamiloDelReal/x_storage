@@ -59,6 +59,7 @@ StorageDevice::StorageDevice(const StorageDevice &other)
     m_totalSizeStr = other.m_totalSizeStr;
     m_freeSizeStr = other.m_freeSizeStr;
     m_usedPercent = other.m_usedPercent;
+    m_usedPercentStr = other.m_usedPercentStr;
 
     connect(&m_sizes, &SizeInfo::totalChanged, this, &StorageDevice::totalSizeChanged);
     connect(&m_sizes, &SizeInfo::freeChanged, this, &StorageDevice::freeSizeChanged);
@@ -76,6 +77,7 @@ StorageDevice &StorageDevice::operator=(const StorageDevice &other)
     m_totalSizeStr = other.m_totalSizeStr;
     m_freeSizeStr = other.m_freeSizeStr;
     m_usedPercent = other.m_usedPercent;
+    m_usedPercentStr = other.m_usedPercentStr;
 
     setParent(other.parent());
 
@@ -125,6 +127,11 @@ QString StorageDevice::freeSizeStr() const
 quint32 StorageDevice::usedPercent() const
 {
     return m_usedPercent;
+}
+
+QString StorageDevice::usedPercentStr() const
+{
+    return m_usedPercentStr;
 }
 
 void StorageDevice::setName(const QString &name)
@@ -205,6 +212,15 @@ void StorageDevice::setFreeSize(const quint64 &freeSize)
     }
 }
 
+void StorageDevice::setUsedPercentStr(const QString &usedPercentStr)
+{
+    if (m_usedPercentStr != usedPercentStr)
+    {
+        m_usedPercentStr = usedPercentStr;
+        emit usedPercentStrChanged(m_usedPercentStr);
+    }
+}
+
 void StorageDevice::setTotalSizeStr(const QString &totalSizeStr)
 {
     if(m_totalSizeStr != totalSizeStr)
@@ -229,6 +245,7 @@ void StorageDevice::setUsedPercent(const quint32 &usedPercent)
     {
         m_usedPercent = usedPercent;
         emit usedPercentChanged(m_usedPercent);
+        setUsedPercentStr(QString("%1 %").arg(m_usedPercent));
     }
 }
 
