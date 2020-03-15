@@ -26,12 +26,12 @@ class StorageDevice : public MountPoint
 public:
     enum StorageType
     {
-        Unknown = 0,
-        Root,
-        Internal,
-        SdCard,
-        Usb,
-        Hdd
+        UNKNOWN = 0,
+        ROOT,
+        INTERNAL,
+        SDCARD,
+        USB,
+        HDD
     };
     Q_ENUM(StorageType)
 

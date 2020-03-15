@@ -33,8 +33,8 @@ signals:
 private:
     enum StorageFactoryTask
     {
-        InitializeStorageDevices = 0,
-        UpdateStorageDevices
+        INITIALIZE_STORAGE_DEVICES = 0,
+        UPDATE_STORAGE_DEVICES
     };
 
     bool m_isWorking;

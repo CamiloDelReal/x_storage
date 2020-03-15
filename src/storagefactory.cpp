@@ -55,7 +55,7 @@ StorageDevice StorageFactory::getStorageDeviceByFolder(const QString &folderPath
         if(folderPath.startsWith((*it).path()))
         {
             dev = (*it);
-            if((*it).type() != StorageDevice::Root)
+            if((*it).type() != StorageDevice::ROOT)
                 break;
         }
         it++;
@@ -73,7 +73,7 @@ void StorageFactory::initialize(const bool &doInBackground)
 {
     if(doInBackground)
     {
-        m_currentTask = InitializeStorageDevices;
+        m_currentTask = INITIALIZE_STORAGE_DEVICES;
         start();
     }
     else
@@ -86,7 +86,7 @@ void StorageFactory::update(const bool &doInBackground)
 {
     if(doInBackground)
     {
-        m_currentTask = UpdateStorageDevices;
+        m_currentTask = UPDATE_STORAGE_DEVICES;
         start();
     }
     else
@@ -110,10 +110,10 @@ void StorageFactory::execute()
 {
     switch(m_currentTask)
     {
-    case InitializeStorageDevices:
+    case INITIALIZE_STORAGE_DEVICES:
         initialize_bg();
         break;
-    case UpdateStorageDevices:
+    case UPDATE_STORAGE_DEVICES:
         update_bg();
         break;
     }
@@ -151,7 +151,7 @@ void StorageFactory::readStoragesData()
         MountPoint rootPoint = mountedPoints.value(rootPath);
         SizeInfo rootSizes = SizeInfo::calculate(rootPath);
 
-        m_storages << StorageDevice(rootPoint, "Root", StorageDevice::Root, false, false, rootSizes);
+        m_storages << StorageDevice(rootPoint, "Root", StorageDevice::ROOT, false, false, rootSizes);
     }
 
     QAndroidJniObject appContext = QtAndroid::androidContext();
@@ -272,22 +272,22 @@ void StorageFactory::readStoragesData()
                 isPrimary = devItem.callMethod<jboolean>("isPrimary", "()Z");
             }
 
-            StorageDevice::StorageType type = StorageDevice::Unknown;
+            StorageDevice::StorageType type = StorageDevice::UNKNOWN;
 
             if(!isRemovable)
             {
-                type = StorageDevice::Internal;
+                type = StorageDevice::INTERNAL;
             }
             else
             {
                 QRegExp usbPattern(".*usb.*|.*media_rw.*");
                 if(usbPattern.exactMatch(path))
                 {
-                    type = StorageDevice::Usb;
+                    type = StorageDevice::USB;
                 }
                 else
                 {
-                    type = StorageDevice::SdCard;
+                    type = StorageDevice::SDCARD;
                 }
             }
 
@@ -307,7 +307,7 @@ void StorageFactory::readStoragesData()
             StorageDevice device(devInfo.rootPath(), QString::fromLocal8Bit(devInfo.device()),
                                  !devInfo.isReadOnly(), QString::fromLocal8Bit(devInfo.fileSystemType()),
                                  !devInfo.name().isEmpty() ? devInfo.name() : devInfo.displayName(),
-                                 devInfo.isRoot() ? StorageDevice::Root : StorageDevice::Hdd, devInfo.isRoot(),
+                                 devInfo.isRoot() ? StorageDevice::ROOT : StorageDevice::HDD, devInfo.isRoot(),
                                  false, devSizes);
 
             m_storages.append(device);

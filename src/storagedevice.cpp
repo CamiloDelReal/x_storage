@@ -5,7 +5,7 @@
 StorageDevice::StorageDevice(QObject *parent)
     : MountPoint(parent)
 {
-    m_type = Unknown;
+    m_type = UNKNOWN;
     m_isPrimary = false;
     updateSizesStr();
 
