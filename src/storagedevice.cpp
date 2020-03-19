@@ -245,8 +245,9 @@ void StorageDevice::setUsedPercent(const quint32 &usedPercent)
     {
         m_usedPercent = usedPercent;
         emit usedPercentChanged(m_usedPercent);
-        setUsedPercentStr(QString("%1 %").arg(m_usedPercent));
     }
+
+    setUsedPercentStr(QString("%1 %").arg(m_usedPercent));
 }
 
 void StorageDevice::updateSizesStr()
