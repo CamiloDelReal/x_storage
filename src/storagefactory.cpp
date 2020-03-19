@@ -321,7 +321,7 @@ void StorageFactory::readStoragesData()
     StorageDevice device(rootDev.rootPath(), QString::fromLocal8Bit(rootDev.device()),
                          !rootDev.isReadOnly(), QString::fromLocal8Bit(rootDev.fileSystemType()),
                          "Root",
-                         StorageDevice::Root, rootDev.isRoot(),
+                         StorageDevice::ROOT, rootDev.isRoot(),
                          false, devSizes);
 
     m_storages.append(device);
