@@ -17,6 +17,8 @@ class StorageManager : public QObject
 public:
     explicit StorageManager(QObject *parent = nullptr);
 
+    static bool requestPermission();
+
     QObject *model();
     bool isWorking();
 
