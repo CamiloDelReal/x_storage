@@ -17,6 +17,8 @@ A demo app is [here](https://github.com/CamiloDelReal/xstorage_demo)
 	- Device
 	- Read/Write accessibility
 	- File system
+	
+### Migration to Qt6 of the Android core is in TODO
 
 ### How to use for Android with device changes listener
 
