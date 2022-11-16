@@ -2,6 +2,9 @@
 Library to list storage devices<br/>
 A demo app is [here](https://github.com/CamiloDelReal/xstorage_demo)
 
+## This project will not be maintenance anymore
+I am not working for Qt since a while and updates started to become hard after so much changes in Qt 6
+
 ### Features
 - Windows, Android
   * iOS missing
